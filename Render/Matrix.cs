@@ -63,9 +63,6 @@ namespace Render
             pout.M23 = vec.Y;
             pout.M33 = vec.Z;
             pout.M43 = -Vector.Dot(vec, position);
-            pout.M14 = 0.0f;
-            pout.M24 = 0.0f;
-            pout.M34 = 0.0f;
             pout.M44 = 1.0f;
             return pout;
         }
@@ -77,46 +74,28 @@ namespace Render
             Matrix result = new Matrix();
             //first line
             result.M11 = xScale;
-            result.M12 = 0;
-            result.M13 = 0;
-            result.M14 = 0;
             //second line
-            result.M21 = 0;
             result.M22 = yScale;
-            result.M23 = 0;
-            result.M24 = 0;
             //third line
-            result.M31 = 0;
-            result.M32 = 0;
             result.M33 = v3 / (v2 - v3);
             result.M34 = -1;
             //fourth line
-            result.M41 = 0;
-            result.M42 = 0;
             result.M43 = v2 * v3 / (v2 - v3);
-            result.M44 = 0;
             return result;
         }
 
         internal static Matrix RotationYawPitchRoll(double roll, double pitch, double yaw)
         {
-            //throw new NotImplementedException();
             Matrix m = new Matrix();
             m.M11 = (float)((Math.Cos(roll) * Math.Cos(yaw)) + (Math.Sin(roll) * Math.Sin(pitch) * Math.Sin(yaw)));
-	        m.M12 = (float)(Math.Sin(roll) * Math.Cos(pitch));
-	        m.M13 = (float)((Math.Cos(roll) * (-Math.Sin(yaw))) + (Math.Sin(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
-            m.M14 = 0;
-	        m.M21 = (float)((-Math.Sin(roll) * Math.Cos(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Sin(yaw)));
-	        m.M22 = (float)(Math.Cos(roll) * Math.Cos(pitch));
-	        m.M23 = (float)((Math.Sin(roll) * Math.Sin(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
-            m.M24 = 0;
+	    m.M12 = (float)(Math.Sin(roll) * Math.Cos(pitch));
+	    m.M13 = (float)((Math.Cos(roll) * (-Math.Sin(yaw))) + (Math.Sin(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
+	    m.M21 = (float)((-Math.Sin(roll) * Math.Cos(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Sin(yaw)));
+	    m.M22 = (float)(Math.Cos(roll) * Math.Cos(pitch));
+	    m.M23 = (float)((Math.Sin(roll) * Math.Sin(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
             m.M31 = (float)(Math.Cos(pitch) * Math.Sin(yaw));
-	        m.M32 = -(float)Math.Sin(pitch);
-	        m.M33 = (float)(Math.Cos(pitch) * Math.Cos(yaw));
-            m.M34 = 0;
-            m.M41 = 0;
-            m.M42 = 0;
-            m.M43 = 0;
+	    m.M32 = -(float)Math.Sin(pitch);
+	    m.M33 = (float)(Math.Cos(pitch) * Math.Cos(yaw));
             m.M44 = 1;
             return m;
         }
@@ -126,23 +105,14 @@ namespace Render
             Matrix result = new Matrix();
             //first line
             result.M11 = 1;
-            result.M12 = 0;
-            result.M13 = 0;
             result.M14 = position.X;
             //second line
-            result.M21 = 0;
             result.M22 = 1;
-            result.M23 = 0;
             result.M24 = position.Y;
             //third line
-            result.M31 = 0;
-            result.M32 = 0;
             result.M33 = 1;
             result.M34 = position.Z;
             //fourth line
-            result.M41 = 0;
-            result.M42 = 0;
-            result.M43 = 0;
             result.M44 = 1;
             return result;
         }
@@ -178,23 +148,11 @@ namespace Render
             Matrix result = new Matrix();
             //first line
             result.M11 = coef;
-            result.M12 = 0;
-            result.M13 = 0;
-            result.M14 = 0;
             //second line
-            result.M21 = 0;
             result.M22 = coef;
-            result.M23 = 0;
-            result.M24 = 0;
             //third line
-            result.M31 = 0;
-            result.M32 = 0;
             result.M33 = coef;
-            result.M34 = 0;
             //fourth line
-            result.M41 = 0;
-            result.M42 = 0;
-            result.M43 = 0;
             result.M44 = 1;
             return result;
         }
