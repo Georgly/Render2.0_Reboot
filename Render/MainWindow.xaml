@@ -11,8 +11,8 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Canvas Background="DarkBlue"  Name="myCanvas" MouseWheel="myCanva_MouseWheel"></Canvas>
-        <StackPanel Grid.Column="1">
+        <Canvas Background="DarkBlue"  Name="myCanvas" MouseWheel="myCanva_MouseWheel" Grid.RowSpan="2"></Canvas>
+        <StackPanel Grid.Column="1" Grid.RowSpan="2">
             <Button x:Name="openFileBt" Margin="5" BorderThickness="2" FontFamily="Arial" Click="openFileBt_Click">Выбрать файл</Button>
             <Button Name="drawModelBt" Margin="5" BorderThickness="2" FontFamily="Arial" Click="drawModelBt_Click">Нарисовать модель</Button>
             <DockPanel>

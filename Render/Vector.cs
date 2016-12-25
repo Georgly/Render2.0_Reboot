@@ -17,6 +17,8 @@ namespace Render
             Z = z;
             X = x;
             Y = y;
+            //FinalX = Convert.ToInt32(Constants.center + (x - z * Math.Cos(Constants.angl / 180 * Math.PI) / 2) * Constants.zoom);
+            //FinalY = Convert.ToInt32(Constants.center - (y + z * Math.Sin(Constants.angl / 180 * Math.PI) / 2) * Constants.zoom);
         }
 
         double Length()
@@ -31,12 +33,12 @@ namespace Render
 
         public static Vector Cross(Vector v1, Vector v2)
         {
-            return new Vector((float)(v1.Y * v2.Z - v1.Z * v2.Y), (float)(v1.Z * v2.X - v1.X * v2.Z), (float)(v1.X * v2.Y - v1.Y * v2.X));
+            return new Vector(v1.Y * v2.Z - v1.Z * v2.Y, v1.Z * v2.X - v1.X * v2.Z, v1.X * v2.Y - v1.Y * v2.X);
         }
 
         public static Vector Normalize(Vector v)
         {
-            return new Vector((float)(v.X / v.Length()), (float)(v.Y / v.Length()), (float)(v.Z / v.Length()));
+            return new Vector((float)(v.X / v.Length()), (float)(v.Y / v.Length()), (float)(v.Z / v.Length())); ;
         }
 
         public static float Dot(Vector v1, Vector v2)

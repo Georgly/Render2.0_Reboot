@@ -42,15 +42,12 @@ namespace Render
 
         internal static Matrix LookAtLH(Vector position, Vector target, Vector unitY)
         {
-            Vector right, rightn, up, upn, vec, vec2;
+            Vector rightn, upn, vec;
             Matrix pout = new Matrix();
 
-            vec2 = Vector.Subtract(target, position);
-            vec = Vector.Normalize(vec2);
-            right = Vector.Cross(unitY, vec);
-            up = Vector.Cross(vec, right);
-            rightn = Vector.Normalize(right);
-            upn = Vector.Normalize(up);
+            vec = Vector.Normalize(Vector.Subtract(target, position));
+            rightn = Vector.Normalize(Vector.Cross(unitY, vec));
+            upn = Vector.Normalize(Vector.Cross(vec, Vector.Cross(unitY, vec)));
             pout.M11 = rightn.X;
             pout.M21 = rightn.Y;
             pout.M31 = rightn.Z;
@@ -69,7 +66,7 @@ namespace Render
 
         internal static Matrix PerspectiveFovRH(float v1, float p, float v2, float v3)
         {
-            float yScale = (float)Math.Atan(Math.PI * v1 / 360);
+            float yScale = 1 / (float)Math.Tan(/*(Math.PI * v1 / 180)*/v1 / 2);
             float xScale = yScale / p;
             Matrix result = new Matrix();
             //first line
@@ -86,16 +83,17 @@ namespace Render
 
         internal static Matrix RotationYawPitchRoll(double roll, double pitch, double yaw)
         {
+            //throw new NotImplementedException();
             Matrix m = new Matrix();
             m.M11 = (float)((Math.Cos(roll) * Math.Cos(yaw)) + (Math.Sin(roll) * Math.Sin(pitch) * Math.Sin(yaw)));
-	    m.M12 = (float)(Math.Sin(roll) * Math.Cos(pitch));
-	    m.M13 = (float)((Math.Cos(roll) * (-Math.Sin(yaw))) + (Math.Sin(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
-	    m.M21 = (float)((-Math.Sin(roll) * Math.Cos(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Sin(yaw)));
-	    m.M22 = (float)(Math.Cos(roll) * Math.Cos(pitch));
-	    m.M23 = (float)((Math.Sin(roll) * Math.Sin(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
+	        m.M12 = (float)(Math.Sin(roll) * Math.Cos(pitch));
+	        m.M13 = (float)((Math.Cos(roll) * (-Math.Sin(yaw))) + (Math.Sin(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
+	        m.M21 = (float)((-Math.Sin(roll) * Math.Cos(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Sin(yaw)));
+	        m.M22 = (float)(Math.Cos(roll) * Math.Cos(pitch));
+	        m.M23 = (float)((Math.Sin(roll) * Math.Sin(yaw)) + (Math.Cos(roll) * Math.Sin(pitch) * Math.Cos(yaw)));
             m.M31 = (float)(Math.Cos(pitch) * Math.Sin(yaw));
-	    m.M32 = -(float)Math.Sin(pitch);
-	    m.M33 = (float)(Math.Cos(pitch) * Math.Cos(yaw));
+	        m.M32 = -(float)Math.Sin(pitch);
+	        m.M33 = (float)(Math.Cos(pitch) * Math.Cos(yaw));
             m.M44 = 1;
             return m;
         }

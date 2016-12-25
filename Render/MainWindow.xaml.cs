@@ -29,7 +29,7 @@ namespace Render
             model = new Device(myCanvas);
         }
 
-        private void _3D_Render_Load(object sender, RoutedEventArgs e)
+        private void _3D_Render_Load(object sender, RoutedEventArgs e)//не испльзуется
         {
         }
 
@@ -43,37 +43,37 @@ namespace Render
 
         private void drawModelBt_Click(object sender, RoutedEventArgs e)
         {
-            myCanvas.Children.Clear();
-            model.RenderPoint();
-            if (clickCount != 3)
-            {
-                clickCount++;
-            }
-            else
-            {
-                clickCount = 0;
-                clickCount++;
-            }
-            switch (clickCount)
-            {
-                case 1:
-                    {
-                        model.RenderPoint();
-                        break;
-                    }
-                case 2:
-                    {
-                        model.RenderLine();
-                        break;
-                    }
-                //case 3:
-                //    {
-                //        model.DrawModelFill(myCanva);
-                //        break;
-                //    }
-                default:
-                    break;
-            }
+            //myCanvas.Children.Clear();
+            model.Render((float)zoomSlider.Value);
+            //if (clickCount != 3)
+            //{
+            //    clickCount++;
+            //}
+            //else
+            //{
+            //    clickCount = 0;
+            //    clickCount++;
+            //}
+            //switch (clickCount)
+            //{
+            //    case 1:
+            //        {
+            //            model.Render();
+            //            break;
+            //        }
+            //    //case 2:
+            //    //    {
+            //    //        model.RenderLine();
+            //    //        break;
+            //    //    }
+            //    //case 3:
+            //    //    {
+            //    //        model.DrawModelFill(myCanva);
+            //    //        break;
+            //    //    }
+            //    default:
+            //        break;
+            //}
         }
 
         private void upBt_Click(object sender, RoutedEventArgs e)
@@ -110,9 +110,9 @@ namespace Render
 
         private void myCanva_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            myCanvas.Children.Clear();
+            //myCanvas.Children.Clear();
             zoomSlider.Value += (e.Delta > 0) ? 0.2 : -0.2;
-            model.Zoom(clickCount, (float)zoomSlider.Value);
+            model.Zoom(/*clickCount, */(float)zoomSlider.Value);
         }
 
         private void _3D_Render_Closed(object sender, EventArgs e)
