@@ -18,6 +18,7 @@ namespace Render
         Canvas canvas;
         Model mesh;
         List<float> zBuffer;
+        float Zoom;
 
         public Device(Canvas c)
         {
@@ -26,7 +27,7 @@ namespace Render
             camera = new Camera();
             canvas = c;
             zBuffer = new List<float>();//new float[(int)((canvas.ActualWidth/* + 1*/) * canvas.ActualHeight)];
-            camera.Position = new Vector(0, 0, 10.0f);
+            camera.Position = new Vector(0, 0, 15.0f);
             camera.Target = new Vector(0, 0, 0);
         }
 
@@ -294,10 +295,24 @@ namespace Render
 
         public void Render(float zoom)
         {
+            Zoom = zoom;
             Clear();
-            Matrix transformMatrix = FindTransformMatrix(zoom);
+            Matrix transformMatrix = FindTransformMatrix(Zoom);
 
             DrawFaces(transformMatrix);
+        }
+
+        private static byte ColorFloatToByte(float val)
+        {
+            if (!(val > 0.0)) // Handles NaN case too
+                return (0);
+            else if (val <= 0.0031308)
+                return ((byte)((255.0f * val * 12.92f) + 0.5f));
+            else if (val < 1.0)
+                return ((byte)((255.0f * ((1.055f *
+                       (float)Math.Pow((double)val, (1.0 / 2.4))) - 0.055f)) + 0.5f));
+            else
+                return (255);
         }
 
         void DrawFaces(Matrix transformMatrix)
@@ -314,7 +329,7 @@ namespace Render
                 Vector pixelC = Project(vertexC, transformMatrix);
 
                 var color = 0.25f + (faceIndex % mesh.Lines.Count) * 0.75f / mesh.Lines.Count;
-                DrawTriangle(pixelA, pixelB, pixelC, Color.FromScRgb(1, color, color, color));
+                DrawTriangle(pixelA, pixelB, pixelC, Color.FromArgb(255, ColorFloatToByte(color), ColorFloatToByte(color), ColorFloatToByte(color))/*.FromScRgb(255, color, color, color)*/);
                 faceIndex++;
             }
         }
@@ -385,7 +400,7 @@ namespace Render
             Matrix viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, /*Vector.UnitY()*/new Vector(0, 1, 0));
             Matrix projectionMatrix = Matrix.PerspectiveFovRH(/*0.78f*/90, (float)(canvas.ActualWidth / canvas.ActualHeight), 0.1f, 100.0f);
             
-            Matrix worldMatrix = Matrix.Translation(mesh.Position) * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z) * Matrix.Scale(zoom);
+            Matrix worldMatrix = Matrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z) * Matrix.Translation(mesh.Position) * Matrix.Scale(zoom);
 
             return worldMatrix * viewMatrix * projectionMatrix;
         }
@@ -400,10 +415,11 @@ namespace Render
         //    return worldMatrix * viewMatrix * projectionMatrix;
         //}
 
-        public void Zoom(/*int clientCount,*/ float zoom)
+        public void ZoomModel(/*int clientCount,*/ float zoom)
         {
             Clear();
-            Matrix m = /*ZoomTransformMatrix(zoom)*/FindTransformMatrix(zoom)/* * Matrix.Scale(zoom)*/;
+            Zoom = zoom;
+            Matrix m = /*ZoomTransformMatrix(zoom)*/FindTransformMatrix(Zoom)/* * Matrix.Scale(zoom)*/;
             DrawFaces(m);
             //switch (clientCount)
             //{
@@ -451,6 +467,14 @@ namespace Render
             //    default:
             //        break;
             //}
+        }
+
+        public void Rotation(int x, int y, int z)
+        {
+            Clear();
+            mesh.Rotation = new Vector(mesh.Rotation.X + x / 50.0f, mesh.Rotation.Y + y / 50.0f, mesh.Rotation.Z + z / 50.0f);
+            Matrix m = FindTransformMatrix(Zoom)/* * Matrix.Rotate(x, y, z)*/;
+            DrawFaces(m);
         }
     }
 }

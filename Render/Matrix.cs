@@ -154,5 +154,25 @@ namespace Render
             result.M44 = 1;
             return result;
         }
+
+        public static Matrix Rotate(int u, int v, int w, float angle = Constants.angl)
+        {
+            Matrix matrix = new Matrix();
+
+            float rcos = (float)Math.Cos(angle);
+            float rsin = (float)Math.Sin(angle);
+            matrix.M11 = rcos + u * u * (1 - rcos);
+            matrix.M21 = w * rsin + v * u * (1 - rcos);
+            matrix.M31 = -v * rsin + w * u * (1 - rcos);
+            matrix.M12 = -w * rsin + u * v * (1 - rcos);
+            matrix.M22 = rcos + v * v * (1 - rcos);
+            matrix.M32 = u * rsin + w * v * (1 - rcos);
+            matrix.M13 = v * rsin + u * w * (1 - rcos);
+            matrix.M23 = -u * rsin + v * w * (1 - rcos);
+            matrix.M33 = rcos + w * w * (1 - rcos);
+            matrix.M44 = 1;
+
+            return matrix;
+        }
     }
 }

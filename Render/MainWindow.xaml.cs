@@ -98,21 +98,21 @@ namespace Render
 
         private void turnBt_Click(object sender, RoutedEventArgs e)
         {
-            //if (Convert.ToInt32(xCoord.IsChecked) == 0 && Convert.ToInt32(yCoord.IsChecked) == 0 && Convert.ToInt32(zCoord.IsChecked) == 0)
-            //{
-            //    MessageBox.Show("Задайте ось(-и) вращения");
-            //}
-            //else
-            //{
-            //    //model.TurnModel(clickCount, Convert.ToInt32(xCoord.IsChecked), Convert.ToInt32(yCoord.IsChecked), Convert.ToInt32(zCoord.IsChecked));
-            //}
+            if (Convert.ToInt32(xCoord.IsChecked) == 0 && Convert.ToInt32(yCoord.IsChecked) == 0 && Convert.ToInt32(zCoord.IsChecked) == 0)
+            {
+                MessageBox.Show("Задайте ось(-и) вращения");
+            }
+            else
+            {
+                model.Rotation(/*clickCount, */Convert.ToInt32(xCoord.IsChecked), Convert.ToInt32(yCoord.IsChecked), Convert.ToInt32(zCoord.IsChecked));
+            }
         }
 
         private void myCanva_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             //myCanvas.Children.Clear();
             zoomSlider.Value += (e.Delta > 0) ? 0.2 : -0.2;
-            model.Zoom(/*clickCount, */(float)zoomSlider.Value);
+            model.ZoomModel(/*clickCount, */(float)zoomSlider.Value);
         }
 
         private void _3D_Render_Closed(object sender, EventArgs e)

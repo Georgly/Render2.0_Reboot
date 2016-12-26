@@ -9,7 +9,7 @@ namespace Render
     static class Constants
     {
         public const int center = 500;
-        public const int angl = 45;
+        public const int angl = 15;
         public static double zoom = 2;
         public const int delta = 15;
         public const int deltaAngl = 15;
