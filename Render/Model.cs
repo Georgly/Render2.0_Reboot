@@ -13,17 +13,24 @@ namespace Render
         public int C;
     }
 
+    public struct Vertex
+    {
+        public Vector3 Normal;
+        public Vector3 Coordinates;
+        public Vector3 WorldCoordinates;
+    }
+
     class Model
     {
         //public string Name { get; set; } // maybe i will use this field, but not now
-        public List<Vector> Vertices { get; private set; }
+        public List<Vertex> Vertices { get; private set; }
         public List<Face> Lines { get; set; }
-        public Vector Position { get; set; }
-        public Vector Rotation { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; }
 
         public Model(/*string name, int verticesCount*/)
         {
-            Vertices = new List<Vector>();
+            Vertices = new List<Vector3>();
             Lines = new List<Face>();
             //Name = name;
         }

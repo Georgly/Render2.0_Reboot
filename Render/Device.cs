@@ -27,8 +27,8 @@ namespace Render
             camera = new Camera();
             canvas = c;
             zBuffer = new List<float>();//new float[(int)((canvas.ActualWidth/* + 1*/) * canvas.ActualHeight)];
-            camera.Position = new Vector(0, 0, 15.0f);
-            camera.Target = new Vector(0, 0, 0);
+            camera.Position = new Vector3(0, 0, 15.0f);
+            camera.Target = new Vector3(0, 0, 0);
         }
 
         public void OpenFile(string fileName)//"обёртка" для "безопасной" работы с файлом
@@ -90,12 +90,13 @@ namespace Render
                                         j++;
                                     }
                                 }
-                                Vector point = new Vector(points[0], points[1], points[2]);
+                                Vector3 point = new Vector3(points[0], points[1], points[2]);
                                 sumX += points[0];
                                 sumY += points[1];
                                 sumZ += points[2];
                                 count++;
-                                mesh.Vertices.Add(point);
+                                mesh.Vertices.Add(/*point*/new Vertex { Coordinates = /*new Vector3(x, y, z)*/point });
+                                //mesh.Vertices[index] = new Vertex { Coordinates = /*new Vector3(x, y, z)*/point };
                                 break;
                             }
                         case "f":
@@ -143,19 +144,19 @@ namespace Render
             }
         }
 
-        Vector Project(Vector coord, Matrix transMat)
+        Vector3 Project(Vector3 coord, Matrix transMat)
         {
             // transforming the coordinates
-            Vector point = Vector.TransformCoordinate(coord, transMat);
+            Vector3 point = Vector3.TransformCoordinate(coord, transMat);
             // The transformed coordinates will be based on coordinate system
             // starting on the center of the screen. But drawing on screen normally starts
             // from top left. We then need to transform them again to have x:0, y:0 on top left.
             float x = (float)(point.X * canvas.ActualWidth + canvas.ActualWidth / 2.0f);
             float y = (float)(-point.Y * canvas.ActualHeight + canvas.ActualHeight / 2.0f);
-            return (new Vector(x, y, point.Z));
+            return (new Vector3(x, y, point.Z));
         }
 
-        void DrawPoint(Vertex point, Color color)
+        void DrawPoint(Vector2 point, Color color)
         {
             // Clipping what's visible on screen
             if (point.X >= 0 && point.Y >= 0 && point.X < canvas.ActualWidth && point.Y < canvas.ActualHeight)
@@ -181,7 +182,7 @@ namespace Render
             return min + (max - min) * Clamp(gradient);
         }
 
-        void ProcessScanLine(int y, Vector pa, Vector pb, Vector pc, Vector pd, Color color)//TODO не рисует некоторые грани
+        void ProcessScanLine(int y, Vector3 pa, Vector3 pb, Vector3 pc, Vector3 pd, Color color)//TODO не рисует некоторые грани
         {
             if (y > 0 && y < canvas.ActualHeight)
             {
@@ -191,13 +192,14 @@ namespace Render
                 var gradient1 = pa.Y != pb.Y ? (y - pa.Y) / (pb.Y - pa.Y) : 1;
                 var gradient2 = pc.Y != pd.Y ? (y - pc.Y) / (pd.Y - pc.Y) : 1;
 
-                int sx = (int)Math.Max(0, Math.Min(Interpolate(pa.X, pb.X, gradient1), canvas.ActualWidth));
-                int ex = (int)Math.Max(0, Math.Min(Interpolate(pc.X, pd.X, gradient2), canvas.ActualWidth));
+                int sX = (int)Math.Max(0, Math.Min(Interpolate(pa.X, pb.X, gradient1), canvas.ActualWidth));
+                int eX = (int)Math.Max(0, Math.Min(Interpolate(pc.X, pd.X, gradient2), canvas.ActualWidth));
 
                 float z1 = Interpolate(pa.Z, pb.Z, gradient1);
                 float z2 = Interpolate(pc.Z, pd.Z, gradient2);
 
-                int stX = Math.Min(sx, ex);
+                int sx = Math.Min(sX, eX);
+                int ex = Math.Max(sX, eX);
                 for (var x = sx; x < ex; x++)
                 {
                     float gradient = (x - sx) / (float)(ex - sx);
@@ -214,36 +216,36 @@ namespace Render
                             index = (int)(x + y * canvas.ActualWidth);
                             x++;
                         }
-                        stX = x;
+                        sx = x;
                         x--;
                     }
                 }
-                DrawLine(stX, ex, y, color);
+                DrawLine(sx, ex, y, color);
             }
         }
 
-        void DrawTriangle(Vector p1, Vector p2, Vector p3, Color color)
+        void DrawTriangle(Vector3 p1, Vector3 p2, Vector3 p3, Color color)
         {
             // Sorting the points in order to always have this order on screen p1, p2 & p3
             // with p1 always up (thus having the Y the lowest possible to be near the top screen)
             // then p2 between p1 & p3
             if (p1.Y > p2.Y)
             {
-                Vector temp = p2;
+                Vector3 temp = p2;
                 p2 = p1;
                 p1 = temp;
             }
 
             if (p2.Y > p3.Y)
             {
-                Vector temp = p2;
+                Vector3 temp = p2;
                 p2 = p3;
                 p3 = temp;
             }
 
             if (p1.Y > p2.Y)
             {
-                Vector temp = p2;
+                Vector3 temp = p2;
                 p2 = p1;
                 p1 = temp;
             }
@@ -297,7 +299,7 @@ namespace Render
         {
             Zoom = zoom;
             Clear();
-            Matrix transformMatrix = FindTransformMatrix(Zoom);
+            Matrix transformMatrix = FindTransformMatrix(/*Zoom*/);
 
             DrawFaces(transformMatrix);
         }
@@ -320,13 +322,13 @@ namespace Render
             var faceIndex = 0;
             foreach (var face in mesh.Lines)
             {
-                Vector vertexA = mesh.Vertices[face.A - 1];
-                Vector vertexB = mesh.Vertices[face.B - 1];
-                Vector vertexC = mesh.Vertices[face.C - 1];
+                Vector3 vertexA = mesh.Vertices[face.A - 1];
+                Vector3 vertexB = mesh.Vertices[face.B - 1];
+                Vector3 vertexC = mesh.Vertices[face.C - 1];
 
-                Vector pixelA = Project(vertexA, transformMatrix);
-                Vector pixelB = Project(vertexB, transformMatrix);
-                Vector pixelC = Project(vertexC, transformMatrix);
+                Vector3 pixelA = Project(vertexA, transformMatrix);
+                Vector3 pixelB = Project(vertexB, transformMatrix);
+                Vector3 pixelC = Project(vertexC, transformMatrix);
 
                 var color = 0.25f + (faceIndex % mesh.Lines.Count) * 0.75f / mesh.Lines.Count;
                 DrawTriangle(pixelA, pixelB, pixelC, Color.FromArgb(255, ColorFloatToByte(color), ColorFloatToByte(color), ColorFloatToByte(color))/*.FromScRgb(255, color, color, color)*/);
@@ -395,31 +397,21 @@ namespace Render
         //    canvas.Children.Add(line);
         //}
 
-        Matrix FindTransformMatrix(float zoom)
+        Matrix FindTransformMatrix(/*float zoom*/)
         {
-            Matrix viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, /*Vector.UnitY()*/new Vector(0, 1, 0));
+            Matrix viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, /*Vector.UnitY()*/new Vector3(0, 1, 0));
             Matrix projectionMatrix = Matrix.PerspectiveFovRH(/*0.78f*/90, (float)(canvas.ActualWidth / canvas.ActualHeight), 0.1f, 100.0f);
             
-            Matrix worldMatrix = Matrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z) * Matrix.Translation(mesh.Position) * Matrix.Scale(zoom);
+            Matrix worldMatrix = Matrix.Translation(mesh.Position) * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z) * Matrix.Scale(Zoom);
 
-            return worldMatrix * viewMatrix * projectionMatrix;
+            return /*worldMatrix*/projectionMatrix * viewMatrix * worldMatrix/*projectionMatrix*/;
         }
-
-        //Matrix ZoomTransformMatrix(float zoom)
-        //{
-        //    Matrix viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, /*Vector.UnitY()*/new Vector(0, 1, 0));
-        //    Matrix projectionMatrix = Matrix.PerspectiveFovRH(/*0.78f*/90, (float)(canvas.ActualWidth / canvas.ActualHeight), 0.1f, 100.0f);
-
-        //    Matrix worldMatrix = Matrix.Translation(mesh.Position) * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z) * Matrix.Scale(zoom);
-
-        //    return worldMatrix * viewMatrix * projectionMatrix;
-        //}
 
         public void ZoomModel(/*int clientCount,*/ float zoom)
         {
             Clear();
             Zoom = zoom;
-            Matrix m = /*ZoomTransformMatrix(zoom)*/FindTransformMatrix(Zoom)/* * Matrix.Scale(zoom)*/;
+            Matrix m = /*ZoomTransformMatrix(zoom)*/FindTransformMatrix(/*Zoom*/)/* * Matrix.Scale(zoom)*/;
             DrawFaces(m);
             //switch (clientCount)
             //{
@@ -472,8 +464,8 @@ namespace Render
         public void Rotation(int x, int y, int z)
         {
             Clear();
-            mesh.Rotation = new Vector(mesh.Rotation.X + x / 50.0f, mesh.Rotation.Y + y / 50.0f, mesh.Rotation.Z + z / 50.0f);
-            Matrix m = FindTransformMatrix(Zoom)/* * Matrix.Rotate(x, y, z)*/;
+            mesh.Rotation = new Vector3(mesh.Rotation.X + x / 10.0f, mesh.Rotation.Y + y / 10.0f, mesh.Rotation.Z + z / 10.0f);
+            Matrix m = FindTransformMatrix();
             DrawFaces(m);
         }
     }

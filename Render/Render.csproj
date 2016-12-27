@@ -60,9 +60,10 @@
     <Compile Include="Error.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="Model.cs" />
+    <Compile Include="ScanLineData.cs" />
     <Compile Include="Sun.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Vertex.cs" />
+    <Compile Include="Vector3.cs" />
+    <Compile Include="Vector2.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

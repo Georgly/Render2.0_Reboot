@@ -8,7 +8,7 @@ namespace Render
 {
     class Sun
     {
-        public Vertex Position { get; set; }
-        public Vertex Target { get; set; }
+        public Vector2 Position { get; set; }
+        public Vector2 Target { get; set; }
     }
 }

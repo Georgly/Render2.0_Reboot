@@ -40,26 +40,26 @@ namespace Render
 
         public float M44;
 
-        internal static Matrix LookAtLH(Vector position, Vector target, Vector unitY)
+        internal static Matrix LookAtLH(Vector3 position, Vector3 target, Vector3 unitY)
         {
-            Vector rightn, upn, vec;
+            Vector3 rightn, upn, vec;
             Matrix pout = new Matrix();
 
-            vec = Vector.Normalize(Vector.Subtract(target, position));
-            rightn = Vector.Normalize(Vector.Cross(unitY, vec));
-            upn = Vector.Normalize(Vector.Cross(vec, Vector.Cross(unitY, vec)));
+            vec = Vector3.Normalize(Vector3.Subtract(target, position));
+            rightn = Vector3.Normalize(Vector3.Cross(unitY, vec));
+            upn = Vector3.Normalize(Vector3.Cross(vec, Vector3.Cross(unitY, vec)));
             pout.M11 = rightn.X;
             pout.M21 = rightn.Y;
             pout.M31 = rightn.Z;
-            pout.M41 = -Vector.Dot(rightn, position);
+            pout.M41 = -Vector3.Dot(rightn, position);
             pout.M12 = upn.X;
             pout.M22 = upn.Y;
             pout.M32 = upn.Z;
-            pout.M42 = -Vector.Dot(upn, position);
+            pout.M42 = -Vector3.Dot(upn, position);
             pout.M13 = vec.X;
             pout.M23 = vec.Y;
             pout.M33 = vec.Z;
-            pout.M43 = -Vector.Dot(vec, position);
+            pout.M43 = -Vector3.Dot(vec, position);
             pout.M44 = 1.0f;
             return pout;
         }
@@ -98,7 +98,7 @@ namespace Render
             return m;
         }
 
-        internal static Matrix Translation(Vector position)
+        internal static Matrix Translation(Vector3 position)
         {
             Matrix result = new Matrix();
             //first line

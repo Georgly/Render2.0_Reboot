@@ -8,7 +8,7 @@ namespace Render
 {
     class Camera
     {
-        public Vector Position { get; set; }
-        public Vector Target { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Target { get; set; }
     }
 }
